@@ -3,7 +3,7 @@ dev:
 	docker build --build-arg UID=$$(id -u) --build-arg GID=$$(id -g) -t robotics:ros1-dev -f ros1/development/Dockerfile ros1/development
 runtime:
 	docker pull ros:noetic
-	docker build --build-arg UID=$$(id -u) --build-arg GID=$$(id -g) -t robotics:ros1-runtime -f ros1/runtime/Dockerfile ros1/runtime
+	docker build -t robotics:ros1-runtime -f ros1/runtime/Dockerfile ros1/runtime
 get-started:
 	make dev
 	make runtime

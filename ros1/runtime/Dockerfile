@@ -1,19 +1,16 @@
 FROM ros:noetic
 
-ARG UID=1000
-ARG GID=1000
+RUN apt-get update && apt-get install -y python3-pip python-is-python3
+RUN pip install --upgrade pip
 
-RUN groupadd -g ${GID} devgroup \
- && useradd -m -u ${UID} -g ${GID} devuser
+ENV ROS_WORKSPACE=/catkin_ws
+ENV ROS_MASTER_URI=http://localhost:11311
 
-RUN apt-get update && apt-get install -y python3-pip
+RUN mkdir -p /catkin_ws/src
 
-RUN apt-get update && apt-get install -y sudo \
- && usermod -aG sudo devuser \
- && echo 'devuser ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
-
-USER devuser
+COPY ./entrypoint.sh ./entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 WORKDIR /root
 
-ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT ["./entrypoint.sh"]

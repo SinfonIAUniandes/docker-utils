@@ -23,9 +23,7 @@ RUN apt-get update
 
 RUN apt-get install ros-noetic-desktop-full -y
 
-RUN apt-get install python3-rosdep python3-rosinstall python3-rosinstall-generator python3-wstool build-essential -y
-
-RUN apt-get install python3-rosdep
+RUN apt-get install python3-pip python3-rosdep python3-rosinstall python3-rosinstall-generator python3-wstool build-essential -y
 
 ARG UID=1000
 ARG GID=1000
