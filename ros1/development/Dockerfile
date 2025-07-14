@@ -23,8 +23,6 @@ RUN apt-get update
 
 RUN apt-get install ros-noetic-desktop-full -y
 
-RUN echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
-
 RUN apt-get install python3-rosdep python3-rosinstall python3-rosinstall-generator python3-wstool build-essential -y
 
 RUN apt-get install python3-rosdep
@@ -35,12 +33,18 @@ ARG GID=1000
 RUN groupadd -g ${GID} devgroup \
  && useradd -m -u ${UID} -g ${GID} devuser
 
+RUN apt-get update && apt-get install -y sudo \
+ && usermod -aG sudo devuser \
+ && echo 'devuser ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
 RUN rosdep init
 
 USER devuser
 
 RUN rosdep update
 
-WORKDIR /root
+RUN echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
+
+WORKDIR /home/devuser/sinfonia/
 
 ENTRYPOINT ["/bin/bash"]

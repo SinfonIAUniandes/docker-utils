@@ -12,7 +12,7 @@ To set up your development environment, run:
 make get-started
 ````
 
-This command may take up to **30 minutes** and performs the following actions:
+This command may take up to **30 minutes** and performs the following actions (by calling make dev and make runtime):
 
   * Pulls essential Docker images: `ubuntu:focal` and `ros:noetic`.
   * Constructs two Docker containers:
@@ -34,6 +34,16 @@ This command initiates a detached, interactive container named `sinfonia-dev` wi
   * **Persistent Source Code**: Mounts the `sinfonia` directory.
   * **Network & Display**: Configures host networking and forwards the display for graphical tools.
 
+
+## Production Containers
+
+In production environments, such as the Pepper robot or the nvidia jetson nano, only use the production container:
+
+```bash
+make runtime
+```
+
+This command only constructs `robotics:ros1-runtime`: The environment for running your applications.
 
 ## Compatibility
 
