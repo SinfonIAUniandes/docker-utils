@@ -8,9 +8,9 @@ ENV ROS_MASTER_URI=http://localhost:11311
 
 RUN mkdir -p /catkin_ws/src
 
-COPY ./entrypoint.sh ./entrypoint.sh
-RUN chmod +x /entrypoint.sh
-
 WORKDIR /root
+
+COPY ./entrypoint.sh ./entrypoint.sh
+RUN chmod +x ./entrypoint.sh
 
 ENTRYPOINT ["./entrypoint.sh"]
