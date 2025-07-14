@@ -1,0 +1,15 @@
+get-started:
+	docker pull ubuntu:focal
+	docker pull ros:noetic
+	docker build --build-arg UID=$$(id -u) --build-arg GID=$$(id -g) -t robotics:ros1-dev -f ros1/development/Dockerfile ros1/development
+	docker build --build-arg UID=$$(id -u) --build-arg GID=$$(id -g) -t robotics:ros1-runtime -f ros1/runtime/Dockerfile ros1/runtime
+create-develop-container:
+	xhost +local:
+	docker run -itd \
+		-v /tmp/.X11-unix:/tmp/.X11-unix \
+		-v $$HOME/.ssh:/root/.ssh \
+		-v $$HOME/sinfonia/:/root/sinfonia/ \
+		-e DISPLAY=$$DISPLAY \
+		--network host \
+		--name sinfonia-dev
+		robotics:ros1-dev
