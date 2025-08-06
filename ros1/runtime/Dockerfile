@@ -1,6 +1,6 @@
 FROM ros:noetic
 
-RUN apt-get update && apt-get install -y python3-pip python-is-python3
+RUN apt-get update && apt-get install -y git python3-pip python-is-python3
 RUN pip install --upgrade pip
 
 ENV ROS_WORKSPACE=/catkin_ws
