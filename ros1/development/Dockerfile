@@ -25,6 +25,7 @@ RUN apt-get install ros-noetic-desktop-full -y
 
 RUN apt-get install python3-pip python3-rosdep python3-rosinstall python3-rosinstall-generator python3-wstool build-essential -y
 
+RUN apt-get install -y python-is-python3
 ARG UID=1000
 ARG GID=1000
 
@@ -42,6 +43,8 @@ USER devuser
 RUN rosdep update
 
 RUN echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
+RUN echo "source \"\${SINFONIA_WS}devel/setup.bash\"" >> ~/.bashrc
+RUN echo "alias reload=\"source ~/.bashrc\"" >> ~/.bashrc
 
 WORKDIR /home/devuser/sinfonia/
 
