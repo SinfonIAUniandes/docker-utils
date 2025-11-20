@@ -1,4 +1,4 @@
-SINFONIA_PATH ?= $$HOME/sinfonia/
+SINFONIA_PATH ?= $$HOME/Documents/docker/ros1_workspaces
 
 dev:
 	docker pull ubuntu:focal
@@ -13,7 +13,7 @@ get-started:
 	make dev
 	make runtime
 create-develop-container:
-	xhost +local: 
+	xhost +local:
 	docker run -itd \
 		-v /tmp/.X11-unix:/tmp/.X11-unix \
 		-v $$HOME/.ssh:/home/devuser/.ssh \

@@ -43,7 +43,6 @@ USER devuser
 RUN rosdep update
 
 RUN echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
-RUN echo "source \"\${SINFONIA_WS}devel/setup.bash\"" >> ~/.bashrc
 RUN echo "alias reload=\"source ~/.bashrc\"" >> ~/.bashrc
 
 WORKDIR /home/devuser/sinfonia/
