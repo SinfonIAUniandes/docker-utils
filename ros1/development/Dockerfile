@@ -36,6 +36,8 @@ RUN apt-get update && apt-get install -y sudo \
  && usermod -aG sudo devuser \
  && echo 'devuser ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
+RUN sudo apt-get install nano -y
+
 RUN rosdep init
 
 USER devuser
