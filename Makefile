@@ -27,6 +27,23 @@ create-develop-container:
 		--network host \
 		--name sinfonia-dev \
 		robotics:ros1-dev
+create-develop-container-gpu:
+	xhost +local:
+	docker run -itd \
+		-v /tmp/.X11-unix:/tmp/.X11-unix \
+		-v $$HOME/.ssh:/home/devuser/.ssh \
+		-v $(SINFONIA_PATH):/home/devuser/sinfonia/ \
+		-e DISPLAY=$$DISPLAY \
+		-e SINFONIA_WS=/home/devuser/sinfonia/ \
+		--device /dev/video0:/dev/video0 \
+		--device /dev/video1:/dev/video1 \
+		--group-add 44 \
+		--group-add 985 \
+		--network host \
+		--name sinfonia-dev \
+		--runtime=nvidia \
+		--gpus all \
+		robotics:ros1-dev
 delete-develop-container:
 	docker stop sinfonia-dev
 	docker rm sinfonia-dev
