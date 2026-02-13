@@ -55,15 +55,19 @@ create-develop-container-jazzy-gpu:
 		-v $(SINFONIA_PATH)/ros2_workspaces:/home/devuser/sinfonia/ \
 		-e DISPLAY=$$DISPLAY \
 		-e SINFONIA_WS=/home/devuser/sinfonia/ \
+		-e QT_X11_NO_MITSHM=1 \
+		-e NVIDIA_VISIBLE_DEVICES=all \
+		-e NVIDIA_DRIVER_CAPABILITIES=all \
 		--device /dev/video0:/dev/video0 \
 		--device /dev/video1:/dev/video1 \
+		--device /dev/dri:/dev/dri \
 		--group-add 44 \
 		--group-add 985 \
 		--network host \
 		--name sinfonia-jazzy-dev \
 		--runtime=nvidia \
 		--gpus all \
-	robotics:ros2-jazzy-dev
+		robotics:ros2-jazzy-dev
 delete-develop-container:
 	docker stop sinfonia-dev
 	docker rm sinfonia-dev

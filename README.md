@@ -2,49 +2,110 @@
 
 ## Overview
 
-This repository provides core utilities for initializing SinfonIA development environments. It requires **Docker** and recommends **GNU Make** for simplified script execution.
+This repository provides core utilities for initializing SinfonIA development environments using Docker. GNU Make is recommended to simplify common operations.
+
+Prerequisites:
+- Docker installed and working
+- (Optional) NVIDIA Container Toolkit for GPU targets
+- Recommended: GNU Make
 
 ## Quick Start
 
-To set up your development environment, run:
+To set up images used by SinfonIA, run:
 
 ```bash
 make get-started
-````
-
-This command may take up to **30 minutes** and performs the following actions (by calling make dev and make runtime):
-
-  * Pulls essential Docker images: `ubuntu:focal` and `ros:noetic`.
-  * Constructs two Docker containers:
-      * `robotics:ros1-dev`: Your dedicated development environment.
-      * `robotics:ros1-runtime`: The environment for running your applications.
-
-## Development Container
-
-To create and launch the development container, execute:
-
-```bash
-make create-develop-container
 ```
 
-This command initiates a detached, interactive container named `sinfonia-dev` with the following configurations:
+This will run `make dev` and `make runtime`. Expect the full process to take up to ~30 minutes depending on network and machine speed.
 
-  * **GUI Support**: Mounts the X11 socket.
-  * **SSH Access**: Mounts your host's SSH directory, enabling key access within the container.
-  * **Persistent Source Code**: Mounts the `sinfonia` directory.
-  * **Network & Display**: Configures host networking and forwards the display for graphical tools.
+## Makefile variables
 
+- SINFONIA_PATH (default: $HOME/Documents/docker) — base path used by container run targets to mount local workspaces.
+- Build arguments passed to some Docker builds:
+  - UID (default: current user's id)
+  - GID (default: current user's group id)
 
-## Production Containers
-
-In production environments, such as the Pepper robot or the nvidia jetson nano, only use the production container:
-
+You can override them on the command line:
 ```bash
-make runtime
+make dev UID=1001 GID=1001
+make dev-jazzy UID=1001 GID=1001
 ```
 
-This command only constructs `robotics:ros1-runtime`: The environment for running your applications.
+## Make targets
+
+- dev
+  - Builds the ROS Noetic development image `robotics:ros1-dev` from `ros1/development/Dockerfile`.
+  - Pulls `ubuntu:focal` first.
+  - Supports build-args UID and GID to match host user permissions.
+
+- dev-jazzy
+  - Builds the ROS 2 Jazzy development image `robotics:ros2-jazzy-dev` from `ros2/jazzy/Dockerfile`.
+  - Note: the Dockerfile uses an Ubuntu base appropriate for Jazzy.
+
+- dev-unitree
+  - Builds the Unitree ROS2 image at `ros2/unitree/Dockerfile`.
+
+- runtime
+  - Builds the runtime image `robotics:ros1-runtime` (pulls `ros:noetic`).
+
+- get-started
+  - Shorthand that runs `make dev` then `make runtime`.
+
+- create-develop-container
+  - Runs a detached development container named `sinfonia-dev` from `robotics:ros1-dev`.
+  - Key mounts and flags:
+    - X11 socket: `-v /tmp/.X11-unix:/tmp/.X11-unix` and `-e DISPLAY=$DISPLAY` (for GUI apps)
+    - SSH keys: `-v $HOME/.ssh:/home/devuser/.ssh`
+    - Workspace mount: `-v $(SINFONIA_PATH)/ros1_workspaces:/home/devuser/sinfonia/`
+    - Devices: `/dev/video0`, `/dev/video1`
+    - Adds supplementary groups used for media devices (`--group-add 44`, `--group-add 985`)
+    - Host networking (`--network host`)
+    - Sets `SINFONIA_WS` env var inside the container
+
+- create-develop-container-gpu
+  - Same as above plus GPU runtime flags: `--runtime=nvidia --gpus all`.
+
+- create-develop-container-jazzy-gpu
+  - Similar to GPU container but mounts `ros2_workspaces` and names the container `sinfonia-jazzy-dev`, using the ROS2 Jazzy image.
+
+- delete-develop-container
+  - Stops and removes the `sinfonia-dev` container.
+
+- connect-develop-container
+  - Attaches a shell: `docker exec -it sinfonia-dev bash`.
+
+## Examples
+
+Build and run a dev container (GPU):
+```bash
+make dev
+make create-develop-container-gpu
+```
+
+Build with a specific UID/GID:
+```bash
+make dev UID=$(id -u) GID=$(id -g)
+```
+
+Run jazzy GPU container:
+```bash
+make dev-jazzy
+make create-develop-container-jazzy-gpu
+```
+
+## Troubleshooting & Notes
+
+- If GUI apps can't connect to X11, allow local connections before running the container:
+  ```bash
+  xhost +local:
+  ```
+- If workspace mount points differ, override SINFONIA_PATH when invoking make:
+  ```bash
+  make create-develop-container SINFONIA_PATH=/path/to/your/docker
+  ```
+- Builds and image downloads can be large; ensure you have sufficient disk space and patience for the first run.
 
 ## Compatibility
 
-This utility has been tested and verified on **WSL** (Windows Subsystem for Linux) and **Linux** distributions. Compatibility with **macOS** has not been confirmed but is expected to work properly.
+Tested on WSL and Linux. macOS may work but is unverified.

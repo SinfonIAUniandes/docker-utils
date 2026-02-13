@@ -39,8 +39,10 @@ RUN apt-get install -y python-is-python3
 ARG UID=1000
 ARG GID=1000
 
-RUN groupadd -o -g ${GID} devgroup || true
-RUN useradd -m -o -u ${UID} -g ${GID} devuser || true
+RUN touch /var/mail/ubuntu && chown ubuntu /var/mail/ubuntu && userdel -r ubuntu
+
+RUN groupadd -g ${GID} devgroup
+RUN useradd -m -u ${UID} -g ${GID} -s /bin/bash devuser
 
 RUN apt-get update && apt-get install -y sudo \
  && usermod -aG sudo devuser \
