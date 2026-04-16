@@ -9,6 +9,10 @@ dev-unitree:
 dev-jazzy:
 	docker pull ubuntu:focal
 	docker build --build-arg UID=$$(id -u) --build-arg GID=$$(id -g) -t robotics:ros2-jazzy-dev -f ros2/jazzy/Dockerfile ros2/jazzy
+dev-humble:
+	docker pull ubuntu:jammy
+	docker build --build-arg UID=$$(id -u) --build-arg GID=$$(id -g) \
+		-t robotics:ros2-humble-dev -f ros2/humble/Dockerfile ros2/humble
 runtime:
 	docker pull ros:noetic
 	docker build -t robotics:ros1-runtime -f ros1/runtime/Dockerfile ros1/runtime
@@ -68,6 +72,25 @@ create-develop-container-jazzy-gpu:
 		--runtime=nvidia \
 		--gpus all \
 		robotics:ros2-jazzy-dev
+create-develop-container-humble-gpu:
+	xhost +local:
+	docker run -itd \
+		-v /tmp/.X11-unix:/tmp/.X11-unix \
+		-v $$HOME/.ssh:/home/devuser/.ssh \
+		-v $(SINFONIA_PATH)/humble_workspaces:/home/devuser/sinfonia/ \
+		-e DISPLAY=$$DISPLAY \
+		-e SINFONIA_WS=/home/devuser/sinfonia/ \
+		-e QT_X11_NO_MITSHM=1 \
+		--device /dev/video0:/dev/video0 \
+		--device /dev/video1:/dev/video1 \
+		--device /dev/dri:/dev/dri \
+		--group-add 44 \
+		--group-add 985 \
+		--network host \
+		--name sinfonia-humble-dev \
+		--runtime=nvidia \
+		--gpus all \
+		robotics:ros2-humble-dev
 delete-develop-container:
 	docker stop sinfonia-dev
 	docker rm sinfonia-dev
