@@ -15,7 +15,7 @@ RUN apt-get install -y lsb-release gnupg
 
 RUN sh -c 'echo "deb http://packages.ros.org/ros/ubuntu focal main" > /etc/apt/sources.list.d/ros-latest.list'
 
-RUN apt-get install curl vim wget net-tools -y
+RUN apt-get install curl nano vim wget net-tools -y
 
 RUN curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add -
 
@@ -29,8 +29,14 @@ RUN apt-get install -y python-is-python3
 ARG UID=1000
 ARG GID=1000
 
+ARG VIDEO_GID=44
+ARG RENDER_GID=109
+
 RUN groupadd -g ${GID} devgroup \
  && useradd -m -u ${UID} -g ${GID} devuser
+
+RUN groupadd -g ${VIDEO_GID} video_host || true
+RUN groupadd -g ${RENDER_GID} render_host || true
 
 RUN apt-get update && apt-get install -y sudo \
  && usermod -aG sudo devuser \

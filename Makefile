@@ -1,8 +1,13 @@
-SINFONIA_PATH ?= $$HOME/Documents/docker
+SINFONIA_PATH ?= $$HOME/Documentos/docker
 
 dev:
 	docker pull ubuntu:focal
-	docker build --build-arg UID=$$(id -u) --build-arg GID=$$(id -g) -t robotics:ros1-dev -f ros1/development/Dockerfile ros1/development
+	docker build \
+		--build-arg UID=$$(id -u) \
+		--build-arg GID=$$(id -g) \
+		--build-arg VIDEO_GID=$(shell getent group video | cut -d: -f3) \
+		--build-arg RENDER_GID=$(shell getent group render | cut -d: -f3) \
+		-t robotics:ros1-dev -f ros1/development/Dockerfile ros1/development $(ARGS)
 dev-unitree:
 	docker pull ubuntu:focal
 	docker build -t robotics:unitree-g1-ros2 -f ros2/unitree/Dockerfile ros2/unitree
@@ -29,8 +34,8 @@ create-develop-container:
 		-e SINFONIA_WS=/home/devuser/sinfonia/ \
 		--device /dev/video0:/dev/video0 \
 		--device /dev/video1:/dev/video1 \
-		--group-add 44 \
-		--group-add 985 \
+		--group-add $(shell getent group video | cut -d: -f3) \
+		--group-add $(shell getent group render | cut -d: -f3) \
 		--network host \
 		--name sinfonia-dev \
 		robotics:ros1-dev
@@ -44,8 +49,8 @@ create-develop-container-gpu:
 		-e SINFONIA_WS=/home/devuser/sinfonia/ \
 		$(shell [ -c /dev/video0 ] && echo "--device /dev/video0:/dev/video0") \
 		$(shell [ -c /dev/video1 ] && echo "--device /dev/video1:/dev/video1") \
-		--group-add 44 \
-		--group-add 985 \
+		--group-add $(shell getent group video | cut -d: -f3) \
+		--group-add $(shell getent group render | cut -d: -f3) \
 		--network host \
 		--name sinfonia-dev \
 		--runtime=nvidia \
@@ -65,8 +70,8 @@ create-develop-container-jazzy-gpu:
 		$(shell [ -c /dev/video0 ] && echo "--device /dev/video0:/dev/video0") \
 		$(shell [ -c /dev/video1 ] && echo "--device /dev/video1:/dev/video1") \
 		--device /dev/dri:/dev/dri \
-		--group-add 44 \
-		--group-add 985 \
+		--group-add $(shell getent group video | cut -d: -f3) \
+		--group-add $(shell getent group render | cut -d: -f3) \
 		--network host \
 		--name sinfonia-jazzy-dev \
 		--runtime=nvidia \
@@ -84,8 +89,8 @@ create-develop-container-humble-gpu:
 		$(shell [ -c /dev/video0 ] && echo "--device /dev/video0:/dev/video0") \
 		$(shell [ -c /dev/video1 ] && echo "--device /dev/video1:/dev/video1") \
 		--device /dev/dri:/dev/dri \
-		--group-add 44 \
-		--group-add 985 \
+		--group-add $(shell getent group video | cut -d: -f3) \
+		--group-add $(shell getent group render | cut -d: -f3) \
 		--network host \
 		--name sinfonia-humble-dev \
 		--runtime=nvidia \
