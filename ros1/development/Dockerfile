@@ -13,7 +13,7 @@ RUN apt-get upgrade -y
 
 RUN apt-get install -y lsb-release gnupg
 
-RUN sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+RUN sh -c 'echo "deb http://packages.ros.org/ros/ubuntu focal main" > /etc/apt/sources.list.d/ros-latest.list'
 
 RUN apt-get install curl vim wget net-tools -y
 

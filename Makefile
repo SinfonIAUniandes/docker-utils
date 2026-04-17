@@ -42,8 +42,8 @@ create-develop-container-gpu:
 		-v $(SINFONIA_PATH)/ros1_workspaces:/home/devuser/sinfonia/ \
 		-e DISPLAY=$$DISPLAY \
 		-e SINFONIA_WS=/home/devuser/sinfonia/ \
-		--device /dev/video0:/dev/video0 \
-		--device /dev/video1:/dev/video1 \
+		$(shell [ -c /dev/video0 ] && echo "--device /dev/video0:/dev/video0") \
+		$(shell [ -c /dev/video1 ] && echo "--device /dev/video1:/dev/video1") \
 		--group-add 44 \
 		--group-add 985 \
 		--network host \
@@ -62,8 +62,8 @@ create-develop-container-jazzy-gpu:
 		-e QT_X11_NO_MITSHM=1 \
 		-e NVIDIA_VISIBLE_DEVICES=all \
 		-e NVIDIA_DRIVER_CAPABILITIES=all \
-		--device /dev/video0:/dev/video0 \
-		--device /dev/video1:/dev/video1 \
+		$(shell [ -c /dev/video0 ] && echo "--device /dev/video0:/dev/video0") \
+		$(shell [ -c /dev/video1 ] && echo "--device /dev/video1:/dev/video1") \
 		--device /dev/dri:/dev/dri \
 		--group-add 44 \
 		--group-add 985 \
@@ -81,8 +81,8 @@ create-develop-container-humble-gpu:
 		-e DISPLAY=$$DISPLAY \
 		-e SINFONIA_WS=/home/devuser/sinfonia/ \
 		-e QT_X11_NO_MITSHM=1 \
-		--device /dev/video0:/dev/video0 \
-		--device /dev/video1:/dev/video1 \
+		$(shell [ -c /dev/video0 ] && echo "--device /dev/video0:/dev/video0") \
+		$(shell [ -c /dev/video1 ] && echo "--device /dev/video1:/dev/video1") \
 		--device /dev/dri:/dev/dri \
 		--group-add 44 \
 		--group-add 985 \
