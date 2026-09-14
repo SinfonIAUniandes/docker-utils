@@ -41,6 +41,7 @@ make dev-jazzy UID=1001 GID=1001
 
 - dev-jazzy
   - Builds the ROS 2 Jazzy development image `robotics:ros2-jazzy-dev` from `ros2/jazzy/Dockerfile`.
+  - Installs ROS 2 Jazzy desktop packages plus `ros-dev-tools` for development workflows such as `colcon build`.
   - Note: the Dockerfile uses an Ubuntu base appropriate for Jazzy.
 
 - dev-unitree
@@ -69,6 +70,10 @@ make dev-jazzy UID=1001 GID=1001
 - create-develop-container-jazzy-gpu
   - Similar to GPU container but mounts `ros2_workspaces` and names the container `sinfonia-jazzy-dev`, using the ROS2 Jazzy image.
 
+- create-develop-container-jazzy
+  - Runs the non-NVIDIA ROS 2 Jazzy development container named `sinfonia-jazzy-dev` from `robotics:ros2-jazzy-dev`.
+  - Mounts `ros2_workspaces`, enables X11/QT GUI passthrough, includes optional camera devices when present, and uses `/dev/dri` when available for Intel/AMD/direct-rendering graphics.
+
 - delete-develop-container
   - Stops and removes the `sinfonia-dev` container.
 
@@ -92,6 +97,12 @@ Run jazzy GPU container:
 ```bash
 make dev-jazzy
 make create-develop-container-jazzy-gpu
+```
+
+Run jazzy container without a dedicated NVIDIA GPU:
+```bash
+make dev-jazzy
+make create-develop-container-jazzy
 ```
 
 ## Troubleshooting & Notes

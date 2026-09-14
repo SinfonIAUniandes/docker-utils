@@ -77,6 +77,23 @@ create-develop-container-jazzy-gpu:
 		--runtime=nvidia \
 		--gpus all \
 		robotics:ros2-jazzy-dev
+create-develop-container-jazzy:
+	xhost +local:
+	docker run -itd \
+		-v /tmp/.X11-unix:/tmp/.X11-unix \
+		-v $$HOME/.ssh:/home/devuser/.ssh \
+		-v $(SINFONIA_PATH)/ros2_workspaces:/home/devuser/sinfonia/ \
+		-e DISPLAY=$$DISPLAY \
+		-e SINFONIA_WS=/home/devuser/sinfonia/ \
+		-e QT_X11_NO_MITSHM=1 \
+		$(shell [ -c /dev/video0 ] && echo "--device /dev/video0:/dev/video0") \
+		$(shell [ -c /dev/video1 ] && echo "--device /dev/video1:/dev/video1") \
+		$(shell [ -d /dev/dri ] && echo "--device /dev/dri:/dev/dri") \
+		$(shell getent group video | awk -F: '{print "--group-add " $$3}') \
+		$(shell getent group render | awk -F: '{print "--group-add " $$3}') \
+		--network host \
+		--name sinfonia-jazzy-dev \
+		robotics:ros2-jazzy-dev
 create-develop-container-humble-gpu:
 	xhost +local:
 	docker run -itd \
